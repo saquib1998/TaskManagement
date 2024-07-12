@@ -1,7 +1,6 @@
 *obj
 *bin
 TaskManagement.API/appsettings.json
-TaskManagement.API/appsettings.Development.json
 /.vs/TaskManagement
 /.vscode
 /TaskManagement.API/Data/Migrations
