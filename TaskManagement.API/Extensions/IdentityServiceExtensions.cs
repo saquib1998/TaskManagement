@@ -11,16 +11,18 @@ public static class IdentityServiceExtensions
     public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration config)
     {
 
-        services.AddIdentityCore<AppUser>(opt =>
+        services.AddIdentity<AppUser, IdentityRole>(options =>
         {
-            // add identity options here
-            opt.Password.RequireNonAlphanumeric = false;
-            opt.Password.RequireDigit = false;
-            opt.Password.RequireLowercase = false;
-            opt.Password.RequireUppercase = false;
+            // Password settings (optional)
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequireDigit = false;
+            options.Password.RequireLowercase = false;
+            options.Password.RequireUppercase = false;
         })
-        .AddEntityFrameworkStores<AppDbContext>()
-        .AddSignInManager<SignInManager<AppUser>>();
+       .AddEntityFrameworkStores<AppDbContext>()
+       .AddSignInManager<SignInManager<AppUser>>()
+       .AddRoles<IdentityRole>();
+
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -35,9 +37,35 @@ public static class IdentityServiceExtensions
                 };
             });
 
+        services.ConfigureApplicationCookie(options =>
+        {
+            options.Events.OnRedirectToLogin = context =>
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return Task.CompletedTask;
+            };
+        });
+
 
         services.AddAuthorization();
 
         return services;
+    }
+
+    public static async Task  CreateRoles(this IServiceProvider services)
+    {
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        var userManager = services.GetRequiredService<UserManager<AppUser>>();
+        string[] roleNames = Enum.GetNames(typeof(Role));
+        IdentityResult roleResult;
+
+        foreach (var roleName in roleNames)
+        {
+            var roleExist = await roleManager.RoleExistsAsync(roleName);
+            if (!roleExist)
+            {
+                roleResult = await roleManager.CreateAsync(new IdentityRole(roleName));
+            }
+        }
     }
 }

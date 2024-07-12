@@ -23,8 +23,8 @@ namespace TaskManagement.API.Controllers
             _userManager = userManager;
         }
 
-        [Authorize]
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
             var user = await _userManager.FindByEmailFromClaimsPrincipal(User);
@@ -61,7 +61,7 @@ namespace TaskManagement.API.Controllers
             if (CheckEmailExistsAsync(registerDto.Email).Result.Value)
             {
                 return new BadRequestObjectResult(new ApiValidationErrorResponse
-                { Errors = new[] { "Email address is in use" } });
+                { Errors = ["Email address is in use"] });
             }
 
             var user = new AppUser
@@ -72,6 +72,8 @@ namespace TaskManagement.API.Controllers
             };
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
+
+            
 
             if (!result.Succeeded) return BadRequest(new ApiResponse(400));
 

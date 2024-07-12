@@ -5,12 +5,12 @@ namespace TaskManagement.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class TasksController : ControllerBase
 {
 
     [HttpGet]
-    [Authorize]
-    public Task<IActionResult> GetPendingTasks()
+    public Task<IActionResult> GetTasks()
     {
         throw new NotImplementedException();
     }

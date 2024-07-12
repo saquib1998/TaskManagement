@@ -1,6 +1,6 @@
 ﻿namespace TaskManagement.API.Data
 {
-    public enum AppRole
+    public enum Role
     {
         Employee,
         Manager,

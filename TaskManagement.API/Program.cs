@@ -1,7 +1,4 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using TaskManagement.API.Data;
 using TaskManagement.API.Extensions;
@@ -13,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(option =>
@@ -44,13 +41,12 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
-
-builder.Services.AddIdentityServices(builder.Configuration);
-
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+builder.Services.AddIdentityServices(builder.Configuration);
 
 builder.Services.AddSingleton<ITokenService, TokenService>();
 
@@ -63,11 +59,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 
 
 app.UseHttpsRedirection();
 
-app.MapControllers();
 
 using var scope = app.Services.CreateScope();
 
@@ -77,10 +77,15 @@ var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 try
 {
     await context.Database.MigrateAsync();
+    await scope.ServiceProvider.CreateRoles();
 }
 catch (Exception ex)
 {
     logger.LogError(ex, "An error occured during migration");
 }
 
+
+app.MapControllers();
+
 app.Run();
+
