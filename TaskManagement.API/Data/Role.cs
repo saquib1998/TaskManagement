@@ -4,7 +4,6 @@
     {
         Employee,
         Manager,
-        TeamLeader,
         Admin
     }
 }

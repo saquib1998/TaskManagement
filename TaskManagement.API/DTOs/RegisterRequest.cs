@@ -15,7 +15,5 @@ namespace TaskManagement.API.DTOs
         [Required]
         [MinLength(4)]
         public string Password { get; set; }
-
-        public Role Role { get; set; }
     }
 }

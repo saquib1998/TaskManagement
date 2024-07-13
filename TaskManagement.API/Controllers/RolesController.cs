@@ -9,20 +9,40 @@ namespace TaskManagement.API.Controllers
     [ApiController]
     [Route("[controller]")]
     [Authorize(Roles = "Admin")]
-    public class RolesController(UserManager<AppUser> userManager) : ControllerBase
+    public class RolesController(UserManager<AppUser> userManager, AppDbContext dbContext) : ControllerBase
     {
 
         /// <summary>
         /// Add a role to a given user.
         /// </summary>
         /// <param name="request">The request body.</param>
-        [HttpPost("/add")]
+        [HttpPost("/modify")]
         public async Task<IActionResult> ModifyRole(ModifyRoleRequest request)
         {
             var user = await userManager.FindByEmailAsync(request.Email);
 
             if (user is null)
                 return BadRequest(new ApiResponse(400, "User does not exist"));
+
+            if(request.Role is not Role.Admin)
+            {
+                if(request.TeamId is null)
+                    return BadRequest(new ApiResponse(400, "Team Id is required if role is not admin."));
+
+                var team = await dbContext.Teams.FindAsync(request.TeamId);
+
+                if (team is null) return BadRequest(new ApiResponse(400, "Team does not exist"));
+
+                user.TeamId = team.Id;
+                team.Members.Add(user);
+
+                if (request.Role == Role.Manager)
+                {
+                    team.ManagerId = user.Id;
+                }
+
+                await dbContext.SaveChangesAsync();
+            }            
 
             await userManager.AddToRoleAsync(user, request.Role.ToString());
 

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using TaskManagement.API.Data;
 using TaskManagement.API.DTOs;
@@ -52,7 +53,7 @@ public class TasksController(UserManager<AppUser> userManager, AppDbContext dbCo
                                         .Include(x => x.Documents)
                                         .SingleOrDefaultAsync(t => t.Id == taskId);
 
-        if(task is null)
+        if (task is null)
         {
             return NotFound(new ApiResponse(404, "The task doesn't exist."));
         }
@@ -73,13 +74,42 @@ public class TasksController(UserManager<AppUser> userManager, AppDbContext dbCo
         {
             Id = task.Id,
             Status = task.Status,
-            Title= task.Title,
+            Title = task.Title,
             Description = task.Description,
             DueDate = new DateTime(task.DueDate.Year, task.DueDate.Month, task.DueDate.Day),
             AssignedTo = task.AssignedUser.Email,
             Comments = comments,
             DocumentIds = task.Documents.Select(x => x.Id)
-        });    
+        });
+    }
+
+    [HttpGet("/teams/{teamId}")]
+    [Authorize(Roles = "Admin,Manager")]
+    public async Task<IActionResult> GetTasksByTeam(int teamId, [Required] DateTime dueDateStart, [Required] DateTime dueEndDate)
+    {
+        var team = await dbContext.Teams.FindAsync(teamId);
+
+        if (team is null)
+            return BadRequest(new ApiResponse(404, "Team not found"));
+
+        var tasks = await dbContext.Tasks
+                                   .Include(x => x.AssignedUser)
+                                   .Where(x => x.DueDate < new DateOnly(dueEndDate.Year, dueEndDate.Month, dueEndDate.Day) &&
+                                               x.DueDate >= new DateOnly(dueDateStart.Year, dueDateStart.Month, dueDateStart.Day) &&
+                                               x.AssignedUser.TeamId == teamId)
+                                   .ToListAsync();
+
+        var response = tasks.Select(x => new TaskResponse
+        {
+            Id = x.Id,
+            Status = x.Status,
+            Title = x.Title,
+            Description = x.Description,
+            DueDate = new DateTime(x.DueDate.Year, x.DueDate.Month, x.DueDate.Day),
+            AssignedTo = x.AssignedUser.Email,
+        });
+
+        return Ok(response);
     }
 
     /// <summary>
@@ -116,35 +146,6 @@ public class TasksController(UserManager<AppUser> userManager, AppDbContext dbCo
         return Created();
     }
 
-    /// <summary>
-    /// Gets pending tasks for all the users before a given due date.
-    /// </summary>
-    /// <returns>Pending Tasks.</returns>
-    [HttpGet("/all")]
-    [Authorize(Roles = "Admin,Manager")]
-    public async Task<IActionResult> GetTasks(DateTime beforeDue, int top = 25, int skip = 0)
-    {
-        var tasks = await dbContext
-                            .Tasks
-                            .Where(x => x.Status != Status.Closed && 
-                                        x.DueDate < new DateOnly(beforeDue.Year, beforeDue.Month, beforeDue.Day))
-                            .Include(x => x.AssignedUser)
-                            .Skip(skip)
-                            .Take(top)
-                            .ToListAsync();
-
-        var response = tasks.Select(x => new TaskResponse
-        {
-            Id = x.Id,
-            Status = x.Status,
-            Title = x.Title,
-            Description = x.Description,
-            DueDate = new DateTime(x.DueDate.Year, x.DueDate.Month, x.DueDate.Day),
-            AssignedTo = x.AssignedUser.Email,
-        });
-
-        return Ok(response);
-    }
 
     /// <summary>
     /// Creates a new task.

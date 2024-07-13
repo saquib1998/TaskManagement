@@ -5,6 +5,7 @@ namespace TaskManagement.API.DTOs
 {
     public class ModifyRoleRequest
     {
+        public int? TeamId { get; set; } 
         public Role Role { get; set; }
 
         [Required]

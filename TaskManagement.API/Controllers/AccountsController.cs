@@ -92,7 +92,7 @@ namespace TaskManagement.API.Controllers
 
             if (!result.Succeeded) return BadRequest(new ApiResponse(400));
 
-            await _userManager.AddToRoleAsync(user, registerDto.Role.ToString());
+            await _userManager.AddToRoleAsync(user, Role.Employee.ToString());
 
             var roles = await _userManager.GetRolesAsync(user);
 
