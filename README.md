@@ -1,5 +1,3 @@
-Readme
-
 This is a web api for managing task for team members.
 
 The admin account is created on its own on application startup. 
