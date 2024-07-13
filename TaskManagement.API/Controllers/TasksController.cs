@@ -18,7 +18,7 @@ public class TasksController(UserManager<AppUser> userManager, AppDbContext dbCo
     /// <summary>
     /// Gets pending tasks for the current user.
     /// </summary>
-    /// <returns>Pending Tasks.</returns>
+    /// <returns>A list of <see cref="TaskResponse"/></returns>
     [HttpGet]
     public async Task<IActionResult> GetPendingTasks()
     {
@@ -40,6 +40,11 @@ public class TasksController(UserManager<AppUser> userManager, AppDbContext dbCo
         return Ok(response);
     }
 
+    /// <summary>
+    /// Gets a Task by id.
+    /// </summary>
+    /// <param name="taskId">The task id.</param>
+    /// <returns><see cref="TaskResponse"/></returns>
     [HttpGet("{taskId}")]
     public async Task<IActionResult> GetTask(int taskId)
     {
@@ -77,6 +82,11 @@ public class TasksController(UserManager<AppUser> userManager, AppDbContext dbCo
         });    
     }
 
+    /// <summary>
+    /// Adds a comment to a particular task.
+    /// </summary>
+    /// <param name="taskId">The task id.</param>
+    /// <param name="commentRequest">The comment body.</param>
     [HttpPost("{taskId}/comment")]
     public async Task<IActionResult> Comment(int taskId, CommentRequest commentRequest)
     {
@@ -136,7 +146,10 @@ public class TasksController(UserManager<AppUser> userManager, AppDbContext dbCo
         return Ok(response);
     }
 
-
+    /// <summary>
+    /// Creates a new task.
+    /// </summary>
+    /// <param name="request">The create request.</param>
     [HttpPost]
     public async Task<IActionResult> CreateTask(CreateTaskRequest request)
     {
@@ -166,6 +179,10 @@ public class TasksController(UserManager<AppUser> userManager, AppDbContext dbCo
         return Created();
     }
 
+    /// <summary>
+    /// Updates a task.
+    /// </summary>
+    /// <param name="request">The update request.</param>
     [HttpPut]
     public async Task<IActionResult> UpdateTask(UpdateTaskRequest request)
     {

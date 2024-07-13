@@ -23,6 +23,10 @@ namespace TaskManagement.API.Controllers
             _userManager = userManager;
         }
 
+        /// <summary>
+        /// Gets the current logged in user.
+        /// </summary>
+        /// <returns>A <see cref="UserDto"/></returns>
         [HttpGet]
         [Authorize]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
@@ -38,6 +42,10 @@ namespace TaskManagement.API.Controllers
             };
         }
 
+        /// <summary>
+        /// Log In.
+        /// </summary>
+        /// <returns>A <see cref="UserDto"/></returns>
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login(LoginRequest loginDto)
@@ -60,6 +68,10 @@ namespace TaskManagement.API.Controllers
             };
         }
 
+        /// <summary>
+        /// Register
+        /// </summary>
+        /// <returns>A <see cref="UserDto"/></returns>
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterRequest registerDto)
         {
@@ -92,6 +104,11 @@ namespace TaskManagement.API.Controllers
             };
         }
 
+        /// <summary>
+        /// Checks if Email exists in the database.
+        /// </summary>
+        /// <param name="email">The email address.</param>
+        /// <returns>Returns <c>True</c> if email exists in the database.</returns>
         [HttpGet("emailexists")]
         public async Task<ActionResult<bool>> CheckEmailExistsAsync([FromQuery] string email)
         {

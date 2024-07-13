@@ -17,6 +17,11 @@ namespace TaskManagement.API.Controllers
             _userManager = userManager;
         }
 
+        /// <summary>
+        /// Add a role to a given user.
+        /// </summary>
+        /// <param name="request">The request body.</param>
+        /// <returns></returns>
         [HttpPost("/add")]
         public async Task<IActionResult> ModifyRole(ModifyRoleRequest request)
         {
