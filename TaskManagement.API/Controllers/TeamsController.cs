@@ -58,7 +58,7 @@ namespace TaskManagement.API.Controllers
             var user = await userManager.FindByEmailAsync(request.Email);
 
             if (user == null)
-                return NotFound(new ApiResponse(404, "user doesnt exist");
+                return NotFound(new ApiResponse(404, "user doesnt exist"));
 
             var team = await dbContext.Teams.FirstOrDefaultAsync(x => x.Id == request.Id);
 
