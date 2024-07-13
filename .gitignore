@@ -2,5 +2,5 @@
 *bin
 TaskManagement.API/appsettings.json
 /.vs/TaskManagement
+/.vscodes
 /.vscode
-/TaskManagement.API/Data/Migrations
