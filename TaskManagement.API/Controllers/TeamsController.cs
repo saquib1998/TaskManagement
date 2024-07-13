@@ -9,7 +9,7 @@ namespace TaskManagement.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize(Roles = "Admin,Manager")]
+    [Authorize(Roles = "Admin")]
     public class TeamsController(UserManager<AppUser> userManager, AppDbContext dbContext) : ControllerBase
     {
         [HttpGet]
@@ -29,6 +29,20 @@ namespace TaskManagement.API.Controllers
                            .ToListAsync();
 
             return Ok(teams);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateTeam(TeamRequest request)
+        {
+            var team = new Team
+            {
+                Name = request.Name
+            };
+
+            await dbContext.Teams.AddAsync(team);
+            await dbContext.SaveChangesAsync();
+
+            return Ok();
         }
 
     }

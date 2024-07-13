@@ -1,6 +1,4 @@
-﻿using TaskManagement.DataAccess.Data;
-
-namespace TaskManagement.API.Data;
+﻿namespace TaskManagement.API.Data;
 
 public class TaskDetails
 {

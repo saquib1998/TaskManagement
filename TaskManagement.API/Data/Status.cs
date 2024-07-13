@@ -1,4 +1,4 @@
-namespace TaskManagement.DataAccess.Data
+namespace TaskManagement.API.Data
 {
     public enum Status
     {

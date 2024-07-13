@@ -7,7 +7,6 @@ using System.Security.Claims;
 using TaskManagement.API.Data;
 using TaskManagement.API.DTOs;
 using TaskManagement.API.Extensions;
-using TaskManagement.DataAccess.Data;
 
 namespace TaskManagement.API.Controllers;
 
@@ -35,7 +34,7 @@ public class TasksController(UserManager<AppUser> userManager, AppDbContext dbCo
             Title = x.Title,
             Description = x.Description,
             DueDate = new DateTime(x.DueDate.Year, x.DueDate.Month, x.DueDate.Day),
-            AssignedTo = x.AssignedUser.Email,
+            AssignedUserEmail = x.AssignedUser.Email,
         });
 
         return Ok(response);
@@ -77,7 +76,8 @@ public class TasksController(UserManager<AppUser> userManager, AppDbContext dbCo
             Title = task.Title,
             Description = task.Description,
             DueDate = new DateTime(task.DueDate.Year, task.DueDate.Month, task.DueDate.Day),
-            AssignedTo = task.AssignedUser.Email,
+            AssignedUserEmail = task.AssignedUser.Email,
+            TeamId = task.AssignedUser.TeamId,
             Comments = comments,
             DocumentIds = task.Documents.Select(x => x.Id)
         });
@@ -106,7 +106,8 @@ public class TasksController(UserManager<AppUser> userManager, AppDbContext dbCo
             Title = x.Title,
             Description = x.Description,
             DueDate = new DateTime(x.DueDate.Year, x.DueDate.Month, x.DueDate.Day),
-            AssignedTo = x.AssignedUser.Email,
+            AssignedUserEmail = x.AssignedUser.Email,
+            TeamId = x.AssignedUser.TeamId,
         });
 
         return Ok(response);

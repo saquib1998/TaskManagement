@@ -38,6 +38,7 @@ namespace TaskManagement.API.Controllers
             return new UserDto
             {
                 Email = user.Email,
+                DisplayName = user.DisplayName,
                 Token = _tokenService.CreateToken(user, roles)
             };
         }
@@ -63,6 +64,7 @@ namespace TaskManagement.API.Controllers
             return new UserDto
             {
                 Email = user.Email,
+                DisplayName = user.DisplayName,
                 Token = _tokenService.CreateToken(user, roles)
                 
             };
