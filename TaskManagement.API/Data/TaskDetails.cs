@@ -9,6 +9,7 @@ public class TaskDetails
     public string Description { get; set; }
     public DateOnly DueDate { get; set; }
     public Status Status { get; set; }
+    public List<Document> Documents { get; set; }
     public List<Comment> Comments { get; set; }
     public AppUser AssignedUser { get; set; }
 }

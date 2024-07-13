@@ -7,4 +7,5 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
 {
     public DbSet<TaskDetails> Tasks { get; set; }
     public DbSet<Comment> Comments { get; set; }
+    public DbSet<Document> Documents { get; set; }  
 }

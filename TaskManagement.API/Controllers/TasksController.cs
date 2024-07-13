@@ -44,6 +44,7 @@ public class TasksController(UserManager<AppUser> userManager, AppDbContext dbCo
     public async Task<IActionResult> GetTask(int taskId)
     {
         var task = await dbContext.Tasks.Include(x => x.AssignedUser)
+                                        .Include(x => x.Documents)
                                         .SingleOrDefaultAsync(t => t.Id == taskId);
 
         if(task is null)
@@ -71,7 +72,8 @@ public class TasksController(UserManager<AppUser> userManager, AppDbContext dbCo
             Description = task.Description,
             DueDate = new DateTime(task.DueDate.Year, task.DueDate.Month, task.DueDate.Day),
             AssignedTo = task.AssignedUser.Email,
-            Comments = comments
+            Comments = comments,
+            DocumentIds = task.Documents.Select(x => x.Id)
         });    
     }
 
@@ -105,7 +107,7 @@ public class TasksController(UserManager<AppUser> userManager, AppDbContext dbCo
     }
 
     /// <summary>
-    /// Gets tasks for all the users before due date.
+    /// Gets pending tasks for all the users before a given due date.
     /// </summary>
     /// <returns>Pending Tasks.</returns>
     [HttpGet("/all")]
@@ -114,7 +116,8 @@ public class TasksController(UserManager<AppUser> userManager, AppDbContext dbCo
     {
         var tasks = await dbContext
                             .Tasks
-                            .Where(x => x.DueDate < new DateOnly(beforeDue.Year, beforeDue.Month, beforeDue.Day))
+                            .Where(x => x.Status != Status.Closed && 
+                                        x.DueDate < new DateOnly(beforeDue.Year, beforeDue.Month, beforeDue.Day))
                             .Include(x => x.AssignedUser)
                             .Skip(skip)
                             .Take(top)

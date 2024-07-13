@@ -12,4 +12,5 @@ public class TaskResponse
     public Status Status { get; set; }
     public string AssignedTo { get; set; }
     public List<CommentResponse> Comments { get; set; } 
+    public IEnumerable<int> DocumentIds { get; set; }
 }
