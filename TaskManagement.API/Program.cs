@@ -13,6 +13,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddIdentityServices(builder.Configuration);
+
 builder.Services.AddSwaggerGen(option =>
 {
     option.SwaggerDoc("v1", new OpenApiInfo { Title = "Task Management API", Version = "v1" });
@@ -46,8 +48,6 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.AddIdentityServices(builder.Configuration);
-
 builder.Services.AddSingleton<ITokenService, TokenService>();
 
 var app = builder.Build();
@@ -77,7 +77,7 @@ var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 try
 {
     await context.Database.MigrateAsync();
-    await scope.ServiceProvider.CreateRoles();
+    await scope.ServiceProvider.CreateRoles(builder.Configuration);
 }
 catch (Exception ex)
 {

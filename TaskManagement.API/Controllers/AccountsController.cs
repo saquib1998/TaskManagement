@@ -29,13 +29,16 @@ namespace TaskManagement.API.Controllers
         {
             var user = await _userManager.FindByEmailFromClaimsPrincipal(User);
 
+            var roles = await _userManager.GetRolesAsync(user);
+
             return new UserDto
             {
                 Email = user.Email,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user, roles)
             };
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login(LoginRequest loginDto)
         {
@@ -47,10 +50,12 @@ namespace TaskManagement.API.Controllers
 
             if (!result.Succeeded) return Unauthorized(new ApiResponse(401));
 
+            var roles = await _userManager.GetRolesAsync(user);
+
             return new UserDto
             {
                 Email = user.Email,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user, roles)
                 
             };
         }
@@ -71,16 +76,18 @@ namespace TaskManagement.API.Controllers
                 UserName = registerDto.Email
             };
 
-            var result = await _userManager.CreateAsync(user, registerDto.Password);
-
-            
+            var result = await _userManager.CreateAsync(user, registerDto.Password);            
 
             if (!result.Succeeded) return BadRequest(new ApiResponse(400));
+
+            await _userManager.AddToRoleAsync(user, registerDto.Role.ToString());
+
+            var roles = await _userManager.GetRolesAsync(user);
 
             return new UserDto
             {
                 DisplayName = user.DisplayName,
-                Token = _tokenService.CreateToken(user),
+                Token = _tokenService.CreateToken(user, roles),
                 Email = user.Email
             };
         }
