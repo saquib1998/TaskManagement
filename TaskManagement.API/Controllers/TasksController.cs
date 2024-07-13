@@ -35,6 +35,7 @@ public class TasksController(UserManager<AppUser> userManager, AppDbContext dbCo
             Description = x.Description,
             DueDate = new DateTime(x.DueDate.Year, x.DueDate.Month, x.DueDate.Day),
             AssignedUserEmail = x.AssignedUser.Email,
+            TeamId = x.AssignedUser.TeamId
         });
 
         return Ok(response);
@@ -87,6 +88,9 @@ public class TasksController(UserManager<AppUser> userManager, AppDbContext dbCo
     [Authorize(Roles = "Admin,Manager")]
     public async Task<IActionResult> GetTasksByTeam(int teamId, [Required] DateTime dueDateStart, [Required] DateTime dueEndDate)
     {
+        if(dueDateStart < dueEndDate)
+            return BadRequest(new ApiResponse(404, "start date should be smaller than end date"));
+
         var team = await dbContext.Teams.FindAsync(teamId);
 
         if (team is null)

@@ -12,6 +12,9 @@ namespace TaskManagement.API.Controllers
     [Authorize(Roles = "Admin")]
     public class TeamsController(UserManager<AppUser> userManager, AppDbContext dbContext) : ControllerBase
     {
+        /// <summary>
+        /// Gets teams for Admin.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetTeams()
         {
@@ -31,6 +34,9 @@ namespace TaskManagement.API.Controllers
             return Ok(teams);
         }
 
+        /// <summary>
+        /// Create Teams.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> CreateTeam(TeamRequest request)
         {

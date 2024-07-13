@@ -34,7 +34,6 @@ namespace TaskManagement.API.Controllers
                 if (team is null) return BadRequest(new ApiResponse(400, "Team does not exist"));
 
                 user.TeamId = team.Id;
-                team.Members.Add(user);
 
                 if (request.Role == Role.Manager)
                 {
