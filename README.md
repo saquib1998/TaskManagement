@@ -9,5 +9,5 @@ All users sign up as Employees by default.
 
 Use Role/modify endpoint using admin account token to asssign other users to different teams or modify their roles.
 
-Any user is able to create/update a task, comment on it and add attachments to it.
+Every user is able to create/update a task, comment on it and add attachments to it.
 
