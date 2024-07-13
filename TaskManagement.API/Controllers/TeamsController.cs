@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using TaskManagement.API.Data;
 using TaskManagement.API.DTOs;
 
@@ -51,5 +52,31 @@ namespace TaskManagement.API.Controllers
             return Ok();
         }
 
+        [HttpPost("assign")]
+        public async Task<IActionResult> AssignToTeam(AssignRequest request)
+        {
+            var user = await userManager.FindByEmailAsync(request.Email);
+
+            if (user == null)
+                return NotFound(new ApiResponse(404, "user doesnt exist");
+
+            var team = await dbContext.Teams.FirstOrDefaultAsync(x => x.Id == request.Id);
+
+            if(team == null)
+                return NotFound(new ApiResponse(404, "Team not found"));
+
+            user.TeamId = team.Id;
+            await dbContext.SaveChangesAsync();
+            return Ok();
+        }
+
+        public class AssignRequest
+        {
+            [Required]
+            public int Id { get; set; }
+            [Required]
+            [EmailAddress]
+            public string Email { get; set; }
+        }
     }
 }

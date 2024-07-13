@@ -24,8 +24,6 @@ namespace TaskManagement.API.Controllers
             if (user is null)
                 return BadRequest(new ApiResponse(400, "User does not exist"));
 
-            if(request.Role is not Role.Admin)
-            {
                 if(request.TeamId is null)
                     return BadRequest(new ApiResponse(400, "Team Id is required if role is not admin."));
 
@@ -41,7 +39,6 @@ namespace TaskManagement.API.Controllers
                 }
 
                 await dbContext.SaveChangesAsync();
-            }            
 
             await userManager.AddToRoleAsync(user, request.Role.ToString());
 
