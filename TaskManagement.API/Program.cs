@@ -59,6 +59,22 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+using var scope = app.Services.CreateScope();
+
+using var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+try
+{
+    await context.Database.EnsureCreatedAsync();
+    await context.Database.MigrateAsync();
+    await scope.ServiceProvider.CreateRoles(builder.Configuration);
+}
+catch (Exception ex)
+{
+    logger.LogError(ex, "An error occured during migration");
+}
+
 app.UseRouting();
 
 app.UseAuthentication();
@@ -69,20 +85,7 @@ app.UseAuthorization();
 app.UseHttpsRedirection();
 
 
-using var scope = app.Services.CreateScope();
 
-using var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-
-try
-{
-    await context.Database.MigrateAsync();
-    await scope.ServiceProvider.CreateRoles(builder.Configuration);
-}
-catch (Exception ex)
-{
-    logger.LogError(ex, "An error occured during migration");
-}
 
 
 app.MapControllers();

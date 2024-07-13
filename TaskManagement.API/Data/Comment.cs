@@ -6,4 +6,5 @@ public class Comment
     public string Content { get; set; }
     public int TaskDetailsId { get; set; }
     public TaskDetails Task { get; set; }
+    public AppUser Author { get; set; }
 }

@@ -1,6 +1,6 @@
 namespace TaskManagement.DataAccess.Data
 {
-    public enum TaskStatus
+    public enum Status
     {
         NotStarted,
         Active,
