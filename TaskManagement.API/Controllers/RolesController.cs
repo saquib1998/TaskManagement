@@ -16,7 +16,7 @@ namespace TaskManagement.API.Controllers
         /// Add a role to a given user.
         /// </summary>
         /// <param name="request">The request body.</param>
-        [HttpPost("/modify")]
+        [HttpPost]
         public async Task<IActionResult> ModifyRole(ModifyRoleRequest request)
         {
             var user = await userManager.FindByEmailAsync(request.Email);

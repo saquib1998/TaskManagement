@@ -45,7 +45,7 @@ builder.Services.AddSwaggerGen(option =>
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {
-    opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
 builder.Services.AddSingleton<ITokenService, TokenService>();
@@ -66,7 +66,6 @@ var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
 try
 {
-    await context.Database.EnsureCreatedAsync();
     await context.Database.MigrateAsync();
     await scope.ServiceProvider.CreateRoles(builder.Configuration);
 }
